@@ -1,15 +1,14 @@
 const express = require('express')
-const mongoose = require('mongoose') //  Importerar Mongoose-paketet som används för att kommunicera med MongoDB-databasen.
+import { MongoClient } from 'mongodb';
 const dotenv = require('dotenv') // Importerar dotenv-paketet som används för att läsa miljövariabler från en .env-fil.
 const seedProducts = require('./seed/seedProducts')
 const seedUsers = require('./seed/seedUsers')
-mongoose.set('strictQuery', false)
 
 const app = express()
 
 // Routes
 const productsRoute = require('./routes/Products')
-//const usersRoute = require('./routes/Users')
+const usersRoute = require('./routes/Users')
 
 app.use(express.json()) // Middleware som används för att tolka JSON-data i inkommande förfrågningar.
 app.use(express.urlencoded({ extended: true })) // Middleware som används för att tolka URL-kodad data i inkommande förfrågningar.
@@ -21,7 +20,8 @@ app.get('/', (req, res) => {
 })
 
 app.use('/products', productsRoute)
-//app.use('/users', usersRoute)
+app.use('/users', usersRoute)
+
 mongoose
     .connect(
         // Anslutning mot databasen. Användarnamn och lösenord 'DB_USERNAME' och 'DB_PASSWORD' hämtas från .env (som inte skickas till Github, ligger i .gitignore)
