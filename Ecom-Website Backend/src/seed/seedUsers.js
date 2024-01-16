@@ -1,6 +1,5 @@
-const Users = require('../models/usersModel')
-const usersData = require('./userData')
+import usersData from "./userData.js";
 
-module.exports = async function seedUsers() {
-    await Promise.all(usersData.map((item) => Users.create(item)))
+export default async function seedUsers() {
+  await Promise.all(usersData.map((item) => Users.create(item)));
 }

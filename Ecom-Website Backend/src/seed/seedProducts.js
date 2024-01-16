@@ -1,8 +1,7 @@
-const Products = require('../models/productsModel')
-const productsData = require('./productsData')
+import productsData from "./productsData.js";
 
-module.exports = async function seedProducts() {
-    await Promise.all(productsData.map((item) => Products.create(item)))
+export default async function seedProducts() {
+  await Promise.all(productsData.map((item) => Products.create(item)));
 }
 
 // await Promise.all(usersData.map((item) => Users.create(item)))
