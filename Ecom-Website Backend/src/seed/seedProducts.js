@@ -1,16 +1,14 @@
+import connectDB from "../db.js";
 import productsData from "./productsData.js";
 
 export default async function seedProducts() {
-  await Promise.all(productsData.map((item) => Products.create(item)));
+  const db = await connectDB();
+  const products = await db.collection("products").find({}).toArray();
+
+  const toInsert = productsData.filter(
+    (product) => !products.some((prod) => prod.id === product.id),
+  );
+  if (!toInsert.length) return;
+
+  db.collection("products").insertMany(toInsert);
 }
-
-// await Promise.all(usersData.map((item) => Users.create(item)))
-
-// await Products.create({
-//   id: '123123123',
-//   name: 'test',
-//   price: 1234,
-//   description: '123124',
-//   imageUrl: 'https://google.com',
-//   averageRating: '1'
-// })
