@@ -5,17 +5,17 @@ import seedProducts from "./seed/seedProducts.js";
 import seedUsers from "./seed/seedUsers.js";
 import cors from "cors";
 import path, { join } from "path";
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from "url";
 
-import {GridFSBucket, ObjectId} from 'mongodb';
-import { Readable } from 'stream';
-import multer from 'multer'
-import fs from 'fs';
+import { GridFSBucket, ObjectId } from "mongodb";
+import { Readable } from "stream";
+import multer from "multer";
+import fs from "fs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const assetsPath = path.join(__dirname, 'assets');
+const assetsPath = path.join(__dirname, "assets");
 
-const bucketName = 'images';
+const bucketName = "images";
 const upload = multer();
 
 const app = express();
@@ -24,11 +24,11 @@ app.use(cors("*"));
 
 app.use(express.static("assets"));
 
-app.post('/upload', upload.any(), async (req, res) => {
+app.post("/upload", upload.any(), async (req, res) => {
   try {
     const db = await connectDB();
     const bucket = new GridFSBucket(db, { bucketName });
-    const products = await db.collection('products').find().toArray();
+    const products = await db.collection("products").find().toArray();
 
     for (const product of products) {
       const productId = product.id;
@@ -41,15 +41,15 @@ app.post('/upload', upload.any(), async (req, res) => {
         fileStream.pipe(uploadStream);
 
         await new Promise((resolve, reject) => {
-          uploadStream.on('finish', resolve);
-          uploadStream.on('error', reject);
+          uploadStream.on("finish", resolve);
+          uploadStream.on("error", reject);
         });
       }
     }
 
-    res.status(200).send('Images mapped to products successfully');
+    res.status(200).send("Images mapped to products successfully");
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
 });
 
@@ -60,7 +60,9 @@ app.get("/api/products", async (req, res) => {
   const bucket = new GridFSBucket(db, { bucketName });
 
   for (const product of products) {
-    const downloadStream = bucket.openDownloadStreamByName(product.id.toString());
+    const downloadStream = bucket.openDownloadStreamByName(
+      product.id.toString(),
+    );
 
     const chunks = [];
     for await (const chunk of downloadStream) {
@@ -68,7 +70,7 @@ app.get("/api/products", async (req, res) => {
     }
 
     const imageBuffer = Buffer.concat(chunks);
-    product.image = imageBuffer.toString('base64');
+    product.image = imageBuffer.toString("base64");
   }
 
   res.status(200).json(products);
@@ -144,6 +146,6 @@ app.delete("/api/users/:userId/cart/:productId", async (req, res) => {
 seedProducts();
 seedUsers();
 
-app.listen(8000, () => {
+app.listen(process.env.PORT || 8000, () => {
   console.log("Server is listening on port 8000");
 });
