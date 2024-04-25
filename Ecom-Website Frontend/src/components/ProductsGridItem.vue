@@ -1,13 +1,13 @@
 <script>
     export default {
         name: 'ProductsGridItem',
-        props: ['product']
+        props: ['product'],
     }
 </script>
 
 <template>
     <div class="product-item">
-        <img v-bind:src="product.imageUrl" />
+        <img :src="`data:image/jpeg;base64,${product.image}`" alt="Product Image" />
         <h3 class="product-name">{{ product.name }}</h3>
         <p class="product-price">{{ product.price }}kr</p>
         <router-link v-bind:to="'/products/' + product.id">

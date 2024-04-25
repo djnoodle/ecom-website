@@ -1,6 +1,6 @@
 <script>
-    import { products } from '../fake-data'
-    import ProductsGrid from '../components/ProductsGrid.vue'
+    import axios from 'axios';
+    import ProductsGrid from '../components/ProductsGrid.vue';
 
     export default {
         name: 'ProductsPage',
@@ -9,8 +9,18 @@
         },
         data() {
             return {
-                products
+                products: [],
             }
+        },
+        async created() {
+          await axios.get('http://localhost:8000/api/products')
+            .then((result) => {
+              console.log(result.data)
+              this.products = result.data;
+            })
+            .catch((error) =>{
+              console.log(error)
+            })
         }
     }
 </script>
